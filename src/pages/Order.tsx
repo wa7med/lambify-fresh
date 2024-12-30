@@ -16,12 +16,9 @@ const Order = () => {
   const [boxCount, setBoxCount] = useState<string>("1");
   const [selectedDate, setSelectedDate] = useState<string>("");
 
-  // Generate next 2 available delivery dates (excluding today)
+  // Generate next 14 available delivery dates (excluding today)
   const tomorrow = addDays(new Date(), 1);
-  const deliveryDates = [
-    tomorrow,
-    addDays(tomorrow, 1),
-  ];
+  const deliveryDates = Array.from({ length: 14 }, (_, i) => addDays(tomorrow, i));
 
   const basePrice = 200; // Price per sheep in euros
   const extraBoxFee = 2.50;
