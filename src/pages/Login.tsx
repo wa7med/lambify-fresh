@@ -63,6 +63,7 @@ const Login = () => {
             }
           }}
           providers={[]}
+          redirectTo={`${window.location.origin}/login`}
           theme="light"
         />
       </div>
