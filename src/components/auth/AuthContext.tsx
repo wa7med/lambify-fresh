@@ -35,11 +35,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (error) {
         console.error("Error fetching profile:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch user profile",
-          variant: "destructive",
-        });
         return null;
       }
       return data;
@@ -50,7 +45,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    // Initial session check
     const initSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -68,7 +62,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     initSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log("Auth state changed:", event, session);
@@ -94,16 +87,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
+      await supabase.auth.signOut();
       setUser(null);
       setProfile(null);
+      navigate("/login");
       toast({
         title: "Success",
         description: "Logged out successfully",
       });
-      navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
