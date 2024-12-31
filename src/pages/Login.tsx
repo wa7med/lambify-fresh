@@ -19,16 +19,22 @@ const Login = () => {
 
   // Listen for auth state changes to show error messages
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_DELETED') {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "user_deleted") {
         toast({
           title: "Account deleted",
           description: "Your account has been deleted successfully.",
         });
-      } else if (event === 'PASSWORD_RECOVERY') {
+      } else if (event === "password_recovery") {
         toast({
           title: "Password recovery email sent",
           description: "Check your email for the password recovery link.",
+        });
+      } else if (event === "invalid_credentials") {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Invalid login credentials. Please try again.",
         });
       }
     });
@@ -57,13 +63,6 @@ const Login = () => {
           }}
           providers={[]}
           theme="light"
-          onError={(error) => {
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: error.message,
-            });
-          }}
         />
       </div>
     </div>
