@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/auth/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
-import { AuthError } from "@supabase/supabase-js";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -31,28 +30,15 @@ const Login = () => {
           title: "Password recovery email sent",
           description: "Check your email for the password recovery link.",
         });
+      } else if (event === "USER_UPDATED") {
+        if (session?.user?.email_confirmed_at) {
+          toast({
+            title: "Email confirmed",
+            description: "Your email has been confirmed successfully.",
+          });
+        }
       }
     });
-
-    // Handle auth errors
-    const handleError = (error: AuthError) => {
-      if (error.message.includes("Email not confirmed")) {
-        toast({
-          variant: "destructive",
-          title: "Email not confirmed",
-          description: "Please check your email to confirm your account.",
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.message,
-        });
-      }
-    };
-
-    // Add error listener
-    supabase.auth.onError(handleError);
 
     return () => {
       subscription.unsubscribe();
