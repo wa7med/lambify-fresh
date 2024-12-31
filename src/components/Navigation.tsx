@@ -32,7 +32,12 @@ export const Navigation = () => {
             </Button>
             {user ? (
               <>
-                <Button variant="ghost" size="icon" onClick={() => signOut()}>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={signOut}
+                  title="Logout"
+                >
                   <LogOut className="h-5 w-5" />
                 </Button>
                 {profile?.role === 'admin' && (
