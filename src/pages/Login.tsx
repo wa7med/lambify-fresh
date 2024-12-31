@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/auth/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
+import { AuthError } from "@supabase/supabase-js";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,25 +20,39 @@ const Login = () => {
 
   // Listen for auth state changes to show error messages
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "user_deleted") {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
         toast({
-          title: "Account deleted",
-          description: "Your account has been deleted successfully.",
+          title: "Signed out",
+          description: "You have been signed out successfully.",
         });
-      } else if (event === "password_recovery") {
+      } else if (event === "PASSWORD_RECOVERY") {
         toast({
           title: "Password recovery email sent",
           description: "Check your email for the password recovery link.",
         });
-      } else if (event === "invalid_credentials") {
+      }
+    });
+
+    // Handle auth errors
+    const handleError = (error: AuthError) => {
+      if (error.message.includes("Email not confirmed")) {
+        toast({
+          variant: "destructive",
+          title: "Email not confirmed",
+          description: "Please check your email to confirm your account.",
+        });
+      } else {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Invalid login credentials. Please try again.",
+          description: error.message,
         });
       }
-    });
+    };
+
+    // Add error listener
+    supabase.auth.onError(handleError);
 
     return () => {
       subscription.unsubscribe();
